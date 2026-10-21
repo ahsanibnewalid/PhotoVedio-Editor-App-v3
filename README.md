@@ -1,96 +1,101 @@
-# PhotoVedio Editor App v2
+# PhotoVedio Editor App v3
 
-A modern, lightweight photo and video editor architecture focused on fast editing, cinematic effects, multi-track timelines, color grading, subject cutouts, and flexible export workflows.
+The **v3 repository is the consolidated development project** for PhotoVedio Editor. It combines the strongest editor architecture and advanced media concepts from **v1 + v2** with the current v3/Google AI Studio work.
 
-> **v2 is the primary development project.** Advanced editing concepts from v1 are being integrated into the v2 architecture while preserving v2's cleaner screen/component structure.
+## Repository lineage
 
-## Original v1 Source
+- **v1 — original source:** https://github.com/ahsanibnewalid/PhotoVedio-Editor-App
+- **v2 — architecture and advanced merge:** https://github.com/ahsanibnewalid/PhotoVedio-Editor-App-v2
+- **v3 — current consolidated project:** https://github.com/ahsanibnewalid/PhotoVedio-Editor-App-v3
 
-The original v1 project remains available here:
+## What v3 contains
 
-**https://github.com/ahsanibnewalid/PhotoVedio-Editor-App**
+### Recovered from v2/v1
+- Dedicated `screens/` architecture with the main EditorScreen
+- Dedicated `shaders/` directory and directional motion-blur shader
+- Shared editor type system for clips, transitions, audio, cutouts, LUTs, proxies and export presets
+- Multi-track timeline
+- Audio-track model with waveform-ready data
+- Preview viewport with filters/LUT/cutout/transition support
+- Export Settings Studio
+- Device capability and adaptive proxy abstractions
+- Timeline history hook
+- Platform-neutral native media pipeline boundary
+- Existing v3 Studio Simulator, Code Inspector, Architecture Diagram and AI Studio work
 
-Use the v1 repository to inspect the original source, history, and implementation used as the basis for the v2 merge.
+### Current v3 editor
+- Responsive editor workbench
+- Video preview
+- Multi-track timeline
+- Audio track/waveform-ready data
+- Clip splitting at the playhead
+- LUT/filter controls
+- Aspect-ratio controls
+- Export Studio
+- AI tool entry points
+- Native source/architecture inspection
 
-## Current Status
+## AI architecture
 
-**Active development — editor architecture/workbench.**
+AI features are intentionally modular. The UI can expose tools such as:
 
-The repository currently provides the editor UI/workbench, application architecture, editing models, shader organization, export configuration, and platform-adapter design.
+- Background removal / subject segmentation
+- Auto captions
+- Smart crop/reframe
+- Subject/object tracking
+- Audio enhancement
+- Auto color enhancement
 
-The current repository should **not** be described as a fully native production Android editor yet. Native execution for FFmpeg-Kit, Android MediaCodec, ML Kit segmentation, and native GPU processing still requires the Android-native implementation layer.
+The repository must distinguish between a UI/adapter and actual native or cloud execution. No AI provider key is hardcoded into the project.
 
-## Features
+## Native media architecture
 
-### Video editing
-- Multi-track timeline model
-- Video and photo clips
-- Layer-based editing
-- Text overlays
-- Media effects
-- Cinematic presentation
-- Export configuration
+```text
+Editor UI
+   ↓
+Application services / adapters
+   ↓
+Native media pipeline
+   ├── FFmpeg
+   ├── Android MediaCodec
+   ├── ML Kit / AI runtime
+   └── GPU / Skia
+```
 
-### Photo editing
-- Image editing architecture
-- Filters and color adjustments
-- LUT-based grading
-- Cinematic effects
-- Overlays and text
-- Subject cutout architecture
-- Layer-based composition
+The current web workbench does not make native Android execution magically available. Native FFmpeg, MediaCodec, ML Kit and GPU implementations still require the target Android runtime layer and device testing.
 
-### Color grading
-- LUT presets
-- 3D LUT-ready shader pipeline
-- Cinematic color grading
-- Shader-based processing
+## Audio workflow
 
-### Subject cutout
-Architecture for:
-- Person/subject segmentation
-- Background removal
-- Subject isolation
-- Layer compositing
+The timeline supports an audio-track model containing:
 
-The native ML implementation is planned for the Android runtime layer.
+- title
+- start time
+- duration
+- volume
+- fade-in
+- fade-out
+- mute state
+- waveform sample data
 
-### Cinematic effects
-- Anamorphic-style presentation
-- Cinematic letterboxing
-- Film-style processing
-- LUT-based grading
-- GPU/shader effects
+The waveform UI/renderer should be treated as an editing visualization until native media decoding/waveform extraction is connected.
 
-### Export
-Defined export profiles include:
-- Reels
-- YouTube
-- YouTube 4K
-- Web
-- Custom
+## Export workflow
 
-Export configuration supports resolution, FPS, bitrate, and H.264/HEVC codec selection.
+Export Studio supports the architecture for:
 
-## v1 → v2 Merge
+- 720p / 1080p / 4K
+- 30 / 60 FPS
+- H.264 / HEVC hardware-oriented codecs
+- bitrate profiles
+- aspect ratios
+- platform presets
 
-Advanced concepts from the original v1 project have been integrated into v2 without replacing the v2 architecture.
-
-Integrated areas include:
-- Multi-track timeline model
-- LUT presets and 3D LUT-ready shader pipeline
-- Subject cutout/segmentation models
-- Export presets
-- Hardware codec settings
-- FFmpeg/MediaCodec export abstraction
-- Cinematic/anamorphic rendering settings
-
-See [`MERGE_PLAN.md`](MERGE_PLAN.md) for the merge details and the original v1 source link.
+Actual native encoding remains an Android runtime responsibility.
 
 ## Architecture
 
 ```text
-PhotoVedio-Editor-App-v2/
+PhotoVedio-Editor-App-v3/
 ├── src/
 │   ├── components/
 │   ├── data/
@@ -100,76 +105,45 @@ PhotoVedio-Editor-App-v2/
 │   ├── types/
 │   ├── utils/
 │   ├── App.tsx
-│   ├── main.tsx
-│   └── index.css
-├── MERGE_PLAN.md
+│   └── main.tsx
+├── README.md
 ├── package.json
-└── README.md
+└── ...
 ```
-
-The design separates the editor UI from media-processing implementations so native Android functionality can be added later through platform adapters.
 
 ## Development
 
-### Requirements
-- Node.js
-- npm
-- Git
-- Modern web browser
-
-### Install
-
 ```bash
-git clone https://github.com/ahsanibnewalid/PhotoVedio-Editor-App-v2.git
-cd PhotoVedio-Editor-App-v2
+git clone https://github.com/ahsanibnewalid/PhotoVedio-Editor-App-v3.git
+cd PhotoVedio-Editor-App-v3
 npm install
-```
-
-### Run
-
-```bash
 npm run dev
 ```
 
-### Build
+Build:
 
 ```bash
 npm run build
 ```
 
-### Preview
+Type-check/lint script:
 
 ```bash
-npm run preview
+npm run lint
 ```
 
-## Native Runtime Roadmap
+## Production status
 
-- [ ] Android project/runtime
-- [ ] MediaCodec integration
-- [ ] FFmpeg integration
-- [ ] ML Kit integration
-- [ ] Native GPU rendering
-- [ ] Real media loading
-- [ ] Timeline interactions
-- [ ] Clip trimming/splitting
-- [ ] Production LUT renderer
-- [ ] Reliable H.264/HEVC export
-- [ ] 1080p/4K export
-- [ ] Device performance testing
-- [ ] Production release validation
+**Active development.** v3 is the consolidation target, but it should not be called a production-ready native Android editor until the native runtime, real media processing, export, AI execution, performance, and device testing are completed.
 
-## Important Development Principle
+## Documentation
 
-The project distinguishes between **architecture/configuration** and **actual native execution**. A feature is only considered production-ready after it is implemented and tested in the target runtime.
+- `CONSOLIDATION.md` — v1/v2/v3 consolidation record
+- `MERGE_PLAN.md` — historical v1 → v2 merge plan, retained as provenance
 
-## Repositories
+## Principle
 
-**Current v2:**
-https://github.com/ahsanibnewalid/PhotoVedio-Editor-App-v2
-
-**Original v1:**
-https://github.com/ahsanibnewalid/PhotoVedio-Editor-App
+Do not delete working functionality to make the project smaller. Prefer modular adapters, reusable editor components, clear feature boundaries, and explicit status labels for implemented vs architecture-only functionality.
 
 ## License
 
