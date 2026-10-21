@@ -1,16 +1,24 @@
-export type NativeMediaOperation = 'decode' | 'encode' | 'segment' | 'lut' | 'audio';
+import type { CutoutSettings, ExportPreset, LUTPreset } from '../data/advancedEditor';
 
-export interface MediaPipelineRequest { operation: NativeMediaOperation; inputUri?: string; outputUri?: string; options?: Record<string, unknown>; }
-export interface MediaPipelineResult { supported: boolean; operation: NativeMediaOperation; message: string; }
-
-export interface MediaPipelineAdapter { supports(operation: NativeMediaOperation): boolean; execute(request: MediaPipelineRequest): Promise<MediaPipelineResult>; }
-
-/** Platform-neutral boundary for FFmpeg/MediaCodec/ML Kit/native GPU implementations. */
-export class WebMediaPipelineAdapter implements MediaPipelineAdapter {
-  supports(operation: NativeMediaOperation) { return operation === 'lut' || operation === 'audio'; }
-  async execute(request: MediaPipelineRequest): Promise<MediaPipelineResult> {
-    return { supported: this.supports(request.operation), operation: request.operation, message: `Web adapter prepared for ${request.operation}; native execution must be supplied by the Android runtime.` };
-  }
+export interface MediaCommand {
+  operation: 'export' | 'segment' | 'apply-lut';
+  args: Record<string, string | number | boolean>;
 }
 
-export const mediaPipeline = new WebMediaPipelineAdapter();
+export function buildExportCommand(preset: ExportPreset, inputUri: string, outputUri: string): MediaCommand {
+  return { operation: 'export', args: { inputUri, outputUri, codec: preset.codec, resolution: preset.resolution, frameRate: preset.frameRate, bitrateMbps: preset.bitrateMbps };
+}
+
+export function buildSegmentationCommand(inputUri: string, settings: CutoutSettings): MediaCommand {
+  return { operation: 'segment', args: { inputUri, enabled: settings.enabled, feather: settings.feather, backgroundBlur: settings.backgroundBlur, layerBehindSubject: settings.layerBehindSubject } };
+}
+
+export function buildLUTCommand(lut: LUTPreset, intensity = lut.intensity): MediaCommand {
+  return { operation: 'apply-lut', args: { lutId: lut.id, intensity } };
+}
+
+export const nativeIntegrationStatus = {
+  ffmpegKit: 'adapter-ready',
+  mlKitSegmentation: 'adapter-ready',
+  mediaCodec: 'adapter-ready',
+} as const;
