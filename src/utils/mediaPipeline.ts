@@ -6,15 +6,37 @@ export interface MediaCommand {
 }
 
 export function buildExportCommand(preset: ExportPreset, inputUri: string, outputUri: string): MediaCommand {
-  return { operation: 'export', args: { inputUri, outputUri, codec: preset.codec, resolution: preset.resolution, frameRate: preset.frameRate, bitrateMbps: preset.bitrateMbps };
+  return {
+    operation: 'export',
+    args: {
+      inputUri,
+      outputUri,
+      codec: preset.codec,
+      resolution: preset.resolution,
+      frameRate: preset.frameRate,
+      bitrateMbps: preset.bitrateMbps,
+    },
+  };
 }
 
 export function buildSegmentationCommand(inputUri: string, settings: CutoutSettings): MediaCommand {
-  return { operation: 'segment', args: { inputUri, enabled: settings.enabled, feather: settings.feather, backgroundBlur: settings.backgroundBlur, layerBehindSubject: settings.layerBehindSubject } };
+  return {
+    operation: 'segment',
+    args: {
+      inputUri,
+      enabled: settings.enabled,
+      feather: settings.feather,
+      backgroundBlur: settings.backgroundBlur,
+      layerBehindSubject: settings.layerBehindSubject,
+    },
+  };
 }
 
 export function buildLUTCommand(lut: LUTPreset, intensity = lut.intensity): MediaCommand {
-  return { operation: 'apply-lut', args: { lutId: lut.id, intensity } };
+  return {
+    operation: 'apply-lut',
+    args: { lutId: lut.id, intensity },
+  };
 }
 
 export const nativeIntegrationStatus = {
